@@ -12,6 +12,7 @@ interface Config {
   API_KEYS: {
     OPENAI: string;
     GROQ: string;
+    ANTHROPIC: string;
   };
   API_ENDPOINTS: {
     SEARXNG: string;
@@ -37,7 +38,10 @@ export const getOpenaiApiKey = () => loadConfig().API_KEYS.OPENAI;
 
 export const getGroqApiKey = () => loadConfig().API_KEYS.GROQ;
 
-export const getSearxngApiEndpoint = () => loadConfig().API_ENDPOINTS.SEARXNG;
+export const getAnthropicApiKey = () => loadConfig().API_KEYS.ANTHROPIC;
+
+export const getSearxngApiEndpoint = () =>
+  process.env.SEARXNG_API_URL || loadConfig().API_ENDPOINTS.SEARXNG;
 
 export const getOllamaApiEndpoint = () => loadConfig().API_ENDPOINTS.OLLAMA;
 

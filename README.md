@@ -1,6 +1,6 @@
 # 🚀 Perplexica - An AI-powered search engine 🔎 <!-- omit in toc -->
 
-![preview](.assets/perplexica-screenshot.png)
+![preview](.assets/perplexica-screenshot.png?)
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -10,8 +10,10 @@
 - [Installation](#installation)
   - [Getting Started with Docker (Recommended)](#getting-started-with-docker-recommended)
   - [Non-Docker Installation](#non-docker-installation)
-  - [Ollama connection errors](#ollama-connection-errors)
+  - [Ollama Connection Errors](#ollama-connection-errors)
 - [Using as a Search Engine](#using-as-a-search-engine)
+- [Using Perplexica's API](#using-perplexicas-api)
+- [Expose Perplexica to a network](#expose-perplexica-to-network)
 - [One-Click Deployment](#one-click-deployment)
 - [Upcoming Features](#upcoming-features)
 - [Support Us](#support-us)
@@ -45,6 +47,7 @@ Want to know more about its architecture and how it works? You can read it [here
   - **Wolfram Alpha Search Mode:** Answers queries that need calculations or data analysis using Wolfram Alpha.
   - **Reddit Search Mode:** Searches Reddit for discussions and opinions related to the query.
 - **Current Information:** Some search tools might give you outdated info because they use data from crawling bots and convert them into embeddings and store them in a index. Unlike them, Perplexica uses SearxNG, a metasearch engine to get the results and rerank and get the most relevant source out of it, ensuring you always get the latest information without the overhead of daily data updates.
+- **API**: Integrate Perplexica into your existing applications and make use of its capibilities.
 
 It has many more features like image and video search. Some of the planned features are mentioned in [upcoming features](#upcoming-features).
 
@@ -67,7 +70,8 @@ There are mainly 2 ways of installing Perplexica - With Docker, Without Docker. 
 
    - `OPENAI`: Your OpenAI API key. **You only need to fill this if you wish to use OpenAI's models**.
    - `OLLAMA`: Your Ollama API URL. You should enter it as `http://host.docker.internal:PORT_NUMBER`. If you installed Ollama on port 11434, use `http://host.docker.internal:11434`. For other ports, adjust accordingly. **You need to fill this if you wish to use Ollama's models instead of OpenAI's**.
-   - `GROQ`: Your Groq API key. **You only need to fill this if you wish to use Groq's hosted models**
+   - `GROQ`: Your Groq API key. **You only need to fill this if you wish to use Groq's hosted models**.
+   - `ANTHROPIC`: Your Anthropic API key. **You only need to fill this if you wish to use Anthropic models**.
 
      **Note**: You can change these after starting Perplexica from the settings dialog.
 
@@ -85,25 +89,35 @@ There are mainly 2 ways of installing Perplexica - With Docker, Without Docker. 
 
 ### Non-Docker Installation
 
-1. Clone the repository and rename the `sample.config.toml` file to `config.toml` in the root directory. Ensure you complete all required fields in this file.
-2. Rename the `.env.example` file to `.env` in the `ui` folder and fill in all necessary fields.
-3. After populating the configuration and environment files, run `npm i` in both the `ui` folder and the root directory.
-4. Install the dependencies and then execute `npm run build` in both the `ui` folder and the root directory.
-5. Finally, start both the frontend and the backend by running `npm run start` in both the `ui` folder and the root directory.
+1. Install SearXNG and allow `JSON` format in the SearXNG settings.
+2. Clone the repository and rename the `sample.config.toml` file to `config.toml` in the root directory. Ensure you complete all required fields in this file.
+3. Rename the `.env.example` file to `.env` in the `ui` folder and fill in all necessary fields.
+4. After populating the configuration and environment files, run `npm i` in both the `ui` folder and the root directory.
+5. Install the dependencies and then execute `npm run build` in both the `ui` folder and the root directory.
+6. Finally, start both the frontend and the backend by running `npm run start` in both the `ui` folder and the root directory.
 
 **Note**: Using Docker is recommended as it simplifies the setup process, especially for managing environment variables and dependencies.
 
 See the [installation documentation](https://github.com/ItzCrazyKns/Perplexica/tree/master/docs/installation) for more information like exposing it your network, etc.
 
-### Ollama connection errors
+### Ollama Connection Errors
 
-If you're facing an Ollama connection error, it is often related to the backend not being able to connect to Ollama's API. How can you fix it? You can fix it by updating your Ollama API URL in the settings menu to the following:
+If you're encountering an Ollama connection error, it is likely due to the backend being unable to connect to Ollama's API. To fix this issue you can:
 
-On Windows: `http://host.docker.internal:11434`<br>
-On Mac: `http://host.docker.internal:11434`<br>
-On Linux: `http://private_ip_of_computer_hosting_ollama:11434`
+1. **Check your Ollama API URL:** Ensure that the API URL is correctly set in the settings menu.
+2. **Update API URL Based on OS:**
 
-You need to edit the ports accordingly.
+   - **Windows:** Use `http://host.docker.internal:11434`
+   - **Mac:** Use `http://host.docker.internal:11434`
+   - **Linux:** Use `http://<private_ip_of_host>:11434`
+
+   Adjust the port number if you're using a different one.
+
+3. **Linux Users - Expose Ollama to Network:**
+
+   - Inside `/etc/systemd/system/ollama.service`, you need to add `Environment="OLLAMA_HOST=0.0.0.0"`. Then restart Ollama by `systemctl restart ollama`. For more information see [Ollama docs](https://github.com/ollama/ollama/blob/main/docs/faq.md#setting-environment-variables-on-linux)
+
+   - Ensure that the port (default is 11434) is not blocked by your firewall.
 
 ## Using as a Search Engine
 
@@ -114,17 +128,29 @@ If you wish to use Perplexica as an alternative to traditional search engines li
 3. Add a new site search with the following URL: `http://localhost:3000/?q=%s`. Replace `localhost` with your IP address or domain name, and `3000` with the port number if Perplexica is not hosted locally.
 4. Click the add button. Now, you can use Perplexica directly from your browser's search bar.
 
+## Using Perplexica's API
+
+Perplexica also provides an API for developers looking to integrate its powerful search engine into their own applications. You can run searches, use multiple models and get answers to your queries.
+
+For more details, check out the full documentation [here](https://github.com/ItzCrazyKns/Perplexica/tree/master/docs/API/SEARCH.md).
+
+## Expose Perplexica to network
+
+You can access Perplexica over your home network by following our networking guide [here](https://github.com/ItzCrazyKns/Perplexica/blob/master/docs/installation/NETWORKING.md).
+
 ## One-Click Deployment
 
 [![Deploy to RepoCloud](https://d16t0pc4846x52.cloudfront.net/deploylobe.svg)](https://repocloud.io/details/?app_id=267)
 
 ## Upcoming Features
 
-- [ ] Finalizing Copilot Mode
 - [x] Add settings page
 - [x] Adding support for local LLMs
-- [ ] Adding Discover and History Saving features
+- [x] History Saving features
 - [x] Introducing various Focus Modes
+- [x] Adding API support
+- [x] Adding Discover
+- [ ] Finalizing Copilot Mode
 
 ## Support Us
 
@@ -132,11 +158,11 @@ If you find Perplexica useful, consider giving us a star on GitHub. This helps m
 
 ### Donations
 
-We also accept donations to help sustain our project. If you would like to contribute, you can use the following button to make a donation in cryptocurrency. Thank you for your support!
+We also accept donations to help sustain our project. If you would like to contribute, you can use the following options to donate. Thank you for your support!
 
-<a href="https://nowpayments.io/donation?api_key=RFFKJH1-GRR4DQG-HFV1DZP-00G6MMK&source=lk_donation&medium=referral" target="_blank">
-  <img src="https://nowpayments.io/images/embeds/donation-button-white.svg" alt="Crypto donation button by NOWPayments">
-</a>
+| Ethereum                                              |
+| ----------------------------------------------------- |
+| Address: `0xB025a84b2F269570Eb8D4b05DEdaA41D8525B6DD` |
 
 ## Contribution
 

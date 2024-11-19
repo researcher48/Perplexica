@@ -53,7 +53,7 @@ const Chat = ({
         const isLast = i === messages.length - 1;
 
         return (
-          <Fragment key={msg.id}>
+          <Fragment key={msg.messageId}>
             <MessageBox
               key={i}
               message={msg}
@@ -66,7 +66,7 @@ const Chat = ({
               sendMessage={sendMessage}
             />
             {!isLast && msg.role === 'assistant' && (
-              <div className="h-px w-full bg-[#1C1C1C]" />
+              <div className="h-px w-full bg-light-secondary dark:bg-dark-secondary" />
             )}
           </Fragment>
         );
